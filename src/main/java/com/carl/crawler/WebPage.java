@@ -106,8 +106,6 @@ public class WebPage {
     @Override
     public String toString() {
         final String eol = System.lineSeparator();
-        return  url + eol +
-                title + eol +
-                description + eol;
+        return title + eol + description + eol;
     }
 }

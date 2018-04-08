@@ -31,7 +31,7 @@ public class WebLink {
             }
 
             if (!scheme.startsWith("http")) {
-                throw new UnhandledURLException("Unsupported protocol");
+                throw new UnhandledURLException("Unsupported protocol: " + scheme);
             }
 
             if (host == null) {
