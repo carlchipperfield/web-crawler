@@ -1,25 +1,20 @@
 package com.carl.crawler;
 
+import java.util.List;
+import java.util.LinkedList;
+import java.io.IOException;
+import java.net.URL;
 import com.google.api.client.http.*;
-
 import com.google.api.client.http.javanet.NetHttpTransport;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.LinkedList;
-
-
 public class WebPage {
 
     static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
-    private URL url;
     private String title;
     private String description;
     private List<URL> links;
@@ -48,7 +43,7 @@ public class WebPage {
 
         String desc = description.attr("content").trim();
 
-        WebPage webPage = new WebPage(url, doc.title(), desc);
+        WebPage webPage = new WebPage(doc.title(), desc);
 
         for (Element link : links) {
             try {
@@ -79,22 +74,20 @@ public class WebPage {
             }
 
             try {
+                manager.addToIndex(link);
                 WebPage page = WebPage.load(link);
                 System.out.println(page);
-
-                manager.addToIndex(link);
                 page.crawl(manager);
             } catch (IOException e) {
-                System.err.println(link);
+                // System.err.println(link);
             }
         }
     }
 
-    public WebPage(URL url, String title, String description) {
-        this.url = url;
+    public WebPage(String title, String description) {
         this.title = title;
         this.description = description;
-        this.links = new LinkedList<URL>();
+        this.links = new LinkedList<>();
     }
 
     public void addLink(URL link) {
