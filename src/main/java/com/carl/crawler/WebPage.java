@@ -11,8 +11,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class WebPage {
-
+public class WebPage
+{
     public static HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
     private URL url;
@@ -47,7 +47,7 @@ public class WebPage {
         for (Element link : links) {
             try {
                 String href = link.attr("href");
-                webPage.addLink(WebLink.build(href, url.getProtocol(), url.getHost()));
+                webPage.addLink(WebLink.build(href, url));
             } catch (UnhandledURLException exception) {
 //                System.err.println(exception);
             }

@@ -4,8 +4,8 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CrawlTracker {
-
+public class CrawlTracker
+{
     private URL seedUrl;
     private Integer remaining;
     private Set<String> index;

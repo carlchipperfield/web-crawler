@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class WebCrawler {
-
+public class WebCrawler
+{
     public static void start(URL seedUrl, Integer crawlLimit) throws IOException {
 
         CrawlTracker tracker = new CrawlTracker(seedUrl, crawlLimit);

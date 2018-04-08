@@ -4,73 +4,101 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 
-public class WebLinkTest {
-
-    final static String DEFAULT_PROTO = "http";
-    final static String DEFAULT_HOST = "www.skysports.com";
-
+public class WebLinkTest
+{
     @Test
-    public void testEmpty() {
+    public void testEmpty() throws MalformedURLException {
+        URL baseUrl = new URL("http://www.skysports.com");
         Assertions.assertThrows(
                 UnhandledURLException.class,
-                () -> WebLink.build("", DEFAULT_PROTO, DEFAULT_HOST), "Empty");
+                () -> WebLink.build("", baseUrl));
     }
 
     @Test
-    public void testFragmentOnly() {
+    public void testFragmentOnly() throws MalformedURLException {
+        URL baseUrl = new URL("http://www.skysports.com");
         Assertions.assertThrows(
                 UnhandledURLException.class,
-                () -> WebLink.build("#hello-world", DEFAULT_PROTO, DEFAULT_HOST), "Internal link");
+                () -> WebLink.build("#hello-world", baseUrl));
     }
 
     @Test
-    public void testQueryOnly() {
+    public void testQueryOnly() throws MalformedURLException {
+        URL baseUrl = new URL("http://www.skysports.com");
         Assertions.assertThrows(
                 UnhandledURLException.class,
-                () -> WebLink.build("?hello=world", DEFAULT_PROTO, DEFAULT_HOST), "Internal link");
-    }
-
-    @Test
-    public void testUnsupportedProtocol()  {
-        Assertions.assertThrows(
-                UnhandledURLException.class,
-                () -> WebLink.build("mailto:hello", DEFAULT_PROTO, DEFAULT_HOST), "Unsupported protocol");
-    }
-
-    @Test
-    public void testTrailingSlashRemoved() throws MalformedURLException, UnhandledURLException {
-
-        URL expectedUrl;
-
-        expectedUrl = new URL("http://www.skysports.com");
-        Assertions.assertEquals(
-                WebLink.build("http://www.skysports.com/", DEFAULT_PROTO, DEFAULT_HOST), expectedUrl);
-
-        expectedUrl = new URL("http://www.skysports.com/hello");
-        Assertions.assertEquals(
-                WebLink.build("/hello/", DEFAULT_PROTO, DEFAULT_HOST), expectedUrl);
+                () -> WebLink.build("?hello=world", baseUrl));
     }
 
     @Test
     public void testRelative() throws MalformedURLException, UnhandledURLException {
-        URL expectedUrl = new URL("http://www.skysports.com/hello/world");
+        URL baseUrl = new URL("http://www.skysports.com/hello");
         Assertions.assertEquals(
-                WebLink.build("/hello/world", DEFAULT_PROTO, DEFAULT_HOST), expectedUrl);
+                new URL("http://www.skysports.com/hello/world"),
+                WebLink.build("world", baseUrl));
     }
 
-//    @Test
-//    void testAbsolute() throws URISyntaxException, MalformedURLException {
-//        Assertions.assertNull(WebLink.build("www.liverpoolfc.com/news", DEFAULT_PROTO, DEFAULT_HOST));
-//    }
+    @Test
+    public void testRelativeAlternative() throws MalformedURLException, UnhandledURLException {
+        URL baseUrl = new URL("http://www.skysports.com/hello");
+        Assertions.assertEquals(
+                new URL("http://www.skysports.com/hello/world"),
+                WebLink.build("./world", baseUrl));
+    }
 
     @Test
-    public void testFullURL() throws MalformedURLException, UnhandledURLException {
-        String url = "https://www.liverpoolfc.com/news";
-        URL expectedUrl = new URL(url);
+    public void testAbsoluteFull() throws MalformedURLException, UnhandledURLException {
+        URL baseUrl = new URL("http://www.liverpoolfc.com");
         Assertions.assertEquals(
-                WebLink.build(url, DEFAULT_PROTO, DEFAULT_HOST), expectedUrl);
+                new URL("https://www.liverpoolfc.com/news"),
+                WebLink.build("https://www.liverpoolfc.com/news", baseUrl));
+    }
+
+    @Test
+    public void testAbsoluteImplicitProtocol() throws MalformedURLException, UnhandledURLException {
+        URL baseUrl = new URL("https://www.liverpoolfc.com");
+        Assertions.assertEquals(
+                new URL("https://www.liverpoolfc.com/news"),
+                WebLink.build("//www.liverpoolfc.com/news", baseUrl));
+    }
+
+    @Test
+    public void testAbsoluteImplicitDomain() throws MalformedURLException, UnhandledURLException {
+        URL baseUrl = new URL("http://www.skysports.com");
+        Assertions.assertEquals(
+                new URL("http://www.skysports.com"),
+                WebLink.build("/", baseUrl));
+    }
+
+    @Test
+    public void testAbsoluteImplicitDomainWithPath() throws MalformedURLException, UnhandledURLException {
+        URL baseUrl = new URL("http://www.skysports.com");
+        Assertions.assertEquals(
+                new URL("http://www.skysports.com/hello/world"),
+                WebLink.build("/hello/world", baseUrl));
+    }
+
+    @Test
+    public void testUnsupportedProtocol() throws MalformedURLException {
+        URL baseUrl = new URL("http://www.skysports.com");
+        Assertions.assertThrows(
+                UnhandledURLException.class,
+                () -> WebLink.build("mailto:hello", baseUrl));
+    }
+
+    @Test
+    public void testTrailingSlashRemoved() throws MalformedURLException, UnhandledURLException {
+        URL baseUrl = new URL("http://www.skysports.com");
+        Assertions.assertEquals(
+                new URL("http://www.skysports.com"),
+                WebLink.build("http://www.skysports.com/", baseUrl));
+        Assertions.assertEquals(
+                new URL("http://www.skysports.com/hello"),
+                WebLink.build("/hello/", baseUrl));
     }
 }
