@@ -10,7 +10,7 @@ public class WebCrawler {
 
         CrawlTracker tracker = new CrawlTracker(seedUrl, crawlLimit);
 
-        WebPage page = WebPage.load(seedUrl);
+        WebPage page = WebPage.load(seedUrl, WebPage.HTTP_TRANSPORT);
         System.out.println(page);
         tracker.addToIndex(seedUrl);
         page.crawl(tracker);

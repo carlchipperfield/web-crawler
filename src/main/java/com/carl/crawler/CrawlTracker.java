@@ -18,22 +18,22 @@ public class CrawlTracker {
         this.failed = new HashSet<>();
     }
 
-    private static String getURL(URL url) {
+    private static String getHostWithPath(URL url) {
         return url.getHost() + url.getPath();
     }
 
     public boolean addToIndex(URL url) {
         remaining--;
-        return index.add(getURL(url));
+        return index.add(getHostWithPath(url));
     }
 
     public boolean addToFailed(URL url) {
-        return failed.add(getURL(url));
+        return failed.add(getHostWithPath(url));
     }
 
     public boolean isCrawled(URL url) {
-        String cleanedUrl = getURL(url);
-        return index.contains(cleanedUrl) || failed.contains(cleanedUrl);
+        String hostWithPath = getHostWithPath(url);
+        return index.contains(hostWithPath) || failed.contains(hostWithPath);
     }
 
     public boolean isCrawlComplete()

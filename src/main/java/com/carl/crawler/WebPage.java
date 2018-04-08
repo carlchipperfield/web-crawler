@@ -13,28 +13,27 @@ import org.jsoup.select.Elements;
 
 public class WebPage {
 
-    static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+    public static HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
+    private URL url;
     private String title;
     private String description;
     private List<URL> links;
 
-    public static WebPage load(URL url) throws IOException {
+    public static WebPage load(URL url, HttpTransport httpTransport) throws IOException {
 
-        HttpRequestFactory requestFactory =
-                HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
-            @Override
-            public void initialize(HttpRequest request) {
+        HttpResponse resp = httpTransport.createRequestFactory()
+            .buildGetRequest(new GenericUrl(url.toString()))
+            .setThrowExceptionOnExecuteError(true)
+            .execute();
 
-            }
-        });
+        String content;
 
-        GenericUrl genericUrl = new GenericUrl(url.toString());
-
-        HttpRequest request = requestFactory.buildGetRequest(genericUrl);
-
-        HttpResponse resp = request.execute();
-        String content = resp.parseAsString();
+        try {
+            content = resp.parseAsString();
+        } finally {
+            resp.disconnect();
+        }
 
         Document doc = Jsoup.parse(content, url.toString());
 
@@ -43,14 +42,14 @@ public class WebPage {
 
         String desc = description.attr("content").trim();
 
-        WebPage webPage = new WebPage(doc.title(), desc);
+        WebPage webPage = new WebPage(url, doc.title(), desc);
 
         for (Element link : links) {
             try {
                 String href = link.attr("href");
                 webPage.addLink(WebLink.build(href, url.getProtocol(), url.getHost()));
             } catch (UnhandledURLException exception) {
-                // System.err.println(exception);
+//                System.err.println(exception);
             }
         }
 
@@ -74,17 +73,18 @@ public class WebPage {
             }
 
             try {
-                WebPage page = WebPage.load(link);
+                WebPage page = WebPage.load(link, WebPage.HTTP_TRANSPORT);
                 System.out.println(page);
                 tracker.addToIndex(link);
                 page.crawl(tracker);
-            } catch (IOException e) {
+            } catch (IOException exception) {
                 tracker.addToFailed(link);
             }
         }
     }
 
-    public WebPage(String title, String description) {
+    public WebPage(URL url, String title, String description) {
+        this.url = url;
         this.title = title;
         this.description = description;
         this.links = new LinkedList<>();
@@ -92,6 +92,35 @@ public class WebPage {
 
     public void addLink(URL link) {
         links.add(link);
+    }
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<URL> getLinks() {
+        return links;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+
+        if (!(obj instanceof WebPage)) return false;
+
+        final WebPage other = (WebPage)obj;
+
+        return url.equals(other.getUrl())
+            && title.equals(other.getTitle())
+            && description.equals(other.getDescription());
     }
 
     @Override
