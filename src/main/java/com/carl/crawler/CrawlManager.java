@@ -18,24 +18,11 @@ public class CrawlManager {
 
     public boolean addToIndex(URL url) {
         remaining--;
-
-        String path = url.getPath();
-
-        if (path.length() > 0 && path.substring(path.length()-1).equals("/")) {
-            path = path.substring(0, path.length()-1);
-        }
-
-        return index.add(url.getHost() + path);
+        return index.add(url.getHost() + url.getPath());
     }
 
     public boolean isIndexed(URL url) {
-        String path = url.getPath();
-
-        if (path.length() > 0 && path.substring(path.length()-1).equals("/")) {
-            path = path.substring(0, path.length()-1);
-        }
-
-        return index.contains(url.getHost() + path);
+        return index.contains(url.getHost() + url.getPath());
     }
 
     public boolean isCrawlComplete()

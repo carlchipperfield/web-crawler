@@ -42,6 +42,7 @@ public class WebLink {
                 path = "";
             }
 
+            // Remove trailing slash
             if (path.length() > 0 && path.substring(path.length()-1).equals("/")) {
                 path = path.substring(0, path.length()-1);
             }

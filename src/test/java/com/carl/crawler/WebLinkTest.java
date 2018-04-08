@@ -32,9 +32,21 @@ public class WebLinkTest {
     }
 
     @Test
+    void testTrailingSlashRemoved() throws MalformedURLException, UnhandledURLException {
+
+        URL expectedUrl;
+
+        expectedUrl = new URL("http://www.skysports.com");
+        Assertions.assertEquals(WebLink.build("http://www.skysports.com/", DEFAULT_PROTO, DEFAULT_HOST), expectedUrl);
+
+        expectedUrl = new URL("http://www.skysports.com/hello");
+        Assertions.assertEquals(WebLink.build("/hello/", DEFAULT_PROTO, DEFAULT_HOST), expectedUrl);
+    }
+
+    @Test
     void testRelative() throws MalformedURLException, UnhandledURLException {
-        URL expectedURL = new URL("http://www.skysports.com/hello/world");
-        Assertions.assertEquals(WebLink.build("/hello/world", DEFAULT_PROTO, DEFAULT_HOST), expectedURL);
+        URL expectedUrl = new URL("http://www.skysports.com/hello/world");
+        Assertions.assertEquals(WebLink.build("/hello/world", DEFAULT_PROTO, DEFAULT_HOST), expectedUrl);
     }
 
 //    @Test
@@ -45,7 +57,7 @@ public class WebLinkTest {
     @Test
     void testFullURL() throws MalformedURLException, UnhandledURLException {
         String url = "https://www.liverpoolfc.com/news";
-        URL expectedURL = new URL(url);
-        Assertions.assertEquals(WebLink.build(url, DEFAULT_PROTO, DEFAULT_HOST), expectedURL);
+        URL expectedUrl = new URL(url);
+        Assertions.assertEquals(WebLink.build(url, DEFAULT_PROTO, DEFAULT_HOST), expectedUrl);
     }
 }

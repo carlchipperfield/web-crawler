@@ -21,8 +21,7 @@ public class CrawlManagerTest {
         manager.addToIndex(new URL("http://www.bbc.co.uk/hello"));
 
         Assertions.assertTrue(manager.isIndexed(new URL("http://www.bbc.co.uk/hello")));
-        Assertions.assertTrue(manager.isIndexed(new URL("http://www.bbc.co.uk/hello/")));
-        Assertions.assertTrue(manager.isIndexed(new URL("https://www.bbc.co.uk/hello/")));
+        Assertions.assertTrue(manager.isIndexed(new URL("https://www.bbc.co.uk/hello")));
     }
 
 
