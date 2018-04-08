@@ -6,18 +6,14 @@ import java.net.URL;
 
 public class WebCrawler {
 
-    private void start(URL seed, Integer limit) {
+    public static void start(URL seedUrl, Integer crawlLimit) throws IOException {
 
-        CrawlManager manager = new CrawlManager(seed, limit);
+        CrawlManager manager = new CrawlManager(seedUrl, crawlLimit);
 
-        try {
-            WebPage page = WebPage.load(seed);
-            System.out.println(page);
-            manager.addToIndex(seed);
-            page.crawl(manager);
-        } catch (IOException exception) {
-            System.err.println("Failed to load seed URL");
-        }
+        WebPage page = WebPage.load(seedUrl);
+        System.out.println(page);
+        manager.addToIndex(seedUrl);
+        page.crawl(manager);
     }
 
     public static void main(String[] args) {
@@ -25,14 +21,15 @@ public class WebCrawler {
             URL seedUrl = new URL(args[0]);
             Integer crawlLimit = Integer.parseInt(args[1]);
 
-            WebCrawler crawler = new WebCrawler();
-            crawler.start(seedUrl, crawlLimit);
+            WebCrawler.start(seedUrl, crawlLimit);
         } catch (ArrayIndexOutOfBoundsException exception) {
             System.err.println("Invalid number of arguments");
         } catch (MalformedURLException exception) {
             System.err.println("Invalid seed URL");
         } catch (NumberFormatException exception) {
             System.err.println("Invalid crawl limit");
+        } catch (IOException exception) {
+            System.err.println("Failed to load seed URL");
         }
     }
 }
