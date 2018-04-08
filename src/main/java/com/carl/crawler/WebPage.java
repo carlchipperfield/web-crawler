@@ -57,29 +57,29 @@ public class WebPage {
         return webPage;
     }
 
-    public void crawl(CrawlManager manager) {
+    public void crawl(CrawlTracker tracker) {
 
         for (URL link : links) {
 
-            if (manager.isCrawlComplete()) {
+            if (tracker.isCrawlComplete()) {
                 break;
             }
 
-            if (!link.getHost().equals(manager.getSeedUrl().getHost())) {
+            if (!link.getHost().equals(tracker.getSeedUrl().getHost())) {
                 continue;
             }
 
-            if (manager.isIndexed(link)) {
+            if (tracker.isCrawled(link)) {
                 continue;
             }
 
             try {
-                manager.addToIndex(link);
                 WebPage page = WebPage.load(link);
                 System.out.println(page);
-                page.crawl(manager);
+                tracker.addToIndex(link);
+                page.crawl(tracker);
             } catch (IOException e) {
-                // System.err.println(link);
+                tracker.addToFailed(link);
             }
         }
     }

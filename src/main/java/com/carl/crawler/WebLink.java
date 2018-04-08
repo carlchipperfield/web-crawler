@@ -12,7 +12,7 @@ public class WebLink {
         href = href.trim();
 
         if (href.length() == 0) {
-            throw new UnhandledURLException("Empty link");
+            throw new UnhandledURLException("Empty");
         }
 
         if (href.startsWith("#") || href.startsWith("?")) {
