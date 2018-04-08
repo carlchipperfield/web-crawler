@@ -54,10 +54,8 @@ public class WebPage {
             try {
                 String href = link.attr("href");
                 webPage.addLink(WebLink.build(href, url.getProtocol(), url.getHost()));
-            } catch (MalformedURLException exception) {
-                System.err.println(exception);
             } catch (UnhandledURLException exception) {
-
+                // System.err.println(exception);
             }
         }
 

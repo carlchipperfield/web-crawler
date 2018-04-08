@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class WebLink {
 
-    static public URL build(String href, String defaultProtocol, String defaultHost) throws UnhandledURLException, MalformedURLException {
+    static public URL build(String href, String defaultProtocol, String defaultHost) throws UnhandledURLException {
 
         href = href.trim();
 
@@ -49,8 +49,8 @@ public class WebLink {
 
             return new URL(scheme, host, path);
 
-        } catch (URISyntaxException exception) {
-            throw new UnhandledURLException("Invalid URI" + exception);
+        } catch (URISyntaxException | MalformedURLException exception) {
+            throw new UnhandledURLException("Invalid URI: " + exception);
         }
 
     }
