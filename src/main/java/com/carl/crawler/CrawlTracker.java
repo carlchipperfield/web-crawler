@@ -36,8 +36,7 @@ public class CrawlTracker
         return index.contains(hostWithPath) || failed.contains(hostWithPath);
     }
 
-    public boolean isCrawlComplete()
-    {
+    public boolean isCrawlComplete() {
         return remaining == 0;
     }
 
